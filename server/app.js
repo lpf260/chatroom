@@ -16,7 +16,7 @@ io.on("connection", (socket) => {
     if (user) {
       // 如果用户存在，登录失败
       socket.emit("loginError", {
-        msg: "登录失败"
+        msg: "登录失败",
       });
     } else {
       users.push(data);
@@ -35,25 +35,30 @@ io.on("connection", (socket) => {
   });
 
   // 断开连接
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     // 删除当前用户
-    const idx = users.findIndex(item => item.username === socket.username);
+    const idx = users.findIndex((item) => item.username === socket.username);
     users.splice(idx, 1);
 
     // 广播提示
-    io.emit('delUser', {
+    io.emit("delUser", {
       username: socket.username,
-      avatar: socket.avatar
-    })
+      avatar: socket.avatar,
+    });
 
     // 变更用户列表
     io.emit("userList", users);
   });
 
   // 接收消息
-  socket.on("sendMessage", data => {
-    io.emit('receiveMsg', data);
-  })
+  socket.on("sendMessage", (data) => {
+    io.emit("receiveMsg", data);
+  });
+
+  //接受图片信息
+  socket.on("sendImage", (data) => {
+    io.emit("receiveImage", data);
+  });
 });
 
 http.listen(8080, () => {

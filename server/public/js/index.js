@@ -33,10 +33,7 @@ socket.on("loginSuccess", (data) => {
   $(".login_box").fadeOut();
   $(".container").fadeIn();
   // 设置个人信息
-  const {
-    avatar,
-    username
-  } = data;
+  const { avatar, username } = data;
   $("#myAvatar").attr("src", avatar);
   $("#myUsername").text(username);
   usernameLogin = username;
@@ -45,9 +42,7 @@ socket.on("loginSuccess", (data) => {
 
 // 监听进入聊天室
 socket.on("addUser", (data) => {
-  const {
-    username
-  } = data;
+  const { username } = data;
   $(".box-bd").append(`
   <div class="system">
           <p class="message_system">
@@ -55,7 +50,7 @@ socket.on("addUser", (data) => {
           </p>
         </div>`);
 
-  scrollIntoView()
+  scrollIntoView();
 });
 
 // 监听当前所有登录用户
@@ -69,14 +64,12 @@ socket.on("userList", (data) => {
   </li>`);
   });
 
-  scrollIntoView()
+  scrollIntoView();
 });
 
 // 用户退出
 socket.on("delUser", (data) => {
-  const {
-    username
-  } = data;
+  const { username } = data;
   $(".box-bd").append(`
   <div class="system">
           <p class="message_system">
@@ -84,7 +77,7 @@ socket.on("delUser", (data) => {
           </p>
         </div>`);
 
-  scrollIntoView()
+  scrollIntoView();
 });
 
 // 聊天功能
@@ -99,14 +92,13 @@ $(".btn-send").on("click", () => {
   socket.emit("sendMessage", {
     msg: content,
     username: usernameLogin,
-    avatar: avatarLogin
+    avatar: avatarLogin,
   });
 });
 
-
-socket.on('receiveMsg', data => {
+socket.on("receiveMsg", (data) => {
   if (data.username === usernameLogin) {
-    $('.box-bd').append(`<div class="message-box">
+    $(".box-bd").append(`<div class="message-box">
           <div class="my message">
             <img class="avatar" src="${data.avatar}" alt="" />
             <div class="content">
@@ -118,7 +110,7 @@ socket.on('receiveMsg', data => {
           </div>
         </div>`);
   } else {
-    $('.box-bd').append(`
+    $(".box-bd").append(`
      <div class="message-box">
           <div class="other message">
             <img class="avatar" src="${data.avatar}" alt="" />
@@ -129,12 +121,60 @@ socket.on('receiveMsg', data => {
               </div>
             </div>
           </div>
-        </div>`)
+        </div>`);
   }
   scrollIntoView();
-})
-
+});
 
 function scrollIntoView() {
-  $('.box-bd').children(':last').get(0).scrollIntoView(false);
+  $(".box-bd").children(":last").get(0).scrollIntoView(false);
 }
+
+// 发送图片功能
+$("#file").on("change", function () {
+  var file = this.files[0];
+
+  var fr = new FileReader();
+  fr.readAsDataURL(file);
+  fr.onload = function () {
+    socket.emit("sendImage", {
+      username: usernameLogin,
+      avatar: avatarLogin,
+      img: fr.result,
+    });
+  };
+});
+
+socket.on("receiveImage", (data) => {
+  if (data.username === usernameLogin) {
+    $(".box-bd").append(`<div class="message-box">
+          <div class="my message">
+            <img class="avatar" src="${data.avatar}" alt="" />
+            <div class="content">
+              <div class="bubble">
+
+                <div class="bubble_cont"><img src="${data.img}"/></div>
+              </div>
+            </div>
+          </div>
+        </div>`);
+  } else {
+    $(".box-bd").append(`
+     <div class="message-box">
+          <div class="other message">
+            <img class="avatar" src="${data.avatar}" alt="" />
+            <div class="content">
+              <div class="nickname">${data.username}</div>
+              <div class="bubble">
+                <div class="bubble_cont"><img src="${data.img}"/></div>
+              </div>
+            </div>
+          </div>
+        </div>`);
+  }
+
+  // 等待图片加载完成
+  $(".box-bd img:last").on("load", function () {
+    scrollIntoView();
+  });
+});
