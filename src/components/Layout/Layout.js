@@ -16,7 +16,6 @@ import ChevronRightIcon from "@material-ui/icons/ChevronRight";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import SettingsIcon from "@material-ui/icons/Settings";
 import PersonIcon from "@material-ui/icons/Person";
@@ -172,14 +171,14 @@ const Layout = ({ classes, children, friendsData }) => {
                   <Avatar alt={nickname} src={avatar} />
                 </ListItemAvatar>
                 <ListItemText id={id} primary={nickname} />
-                <ListItemSecondaryAction>
+                {/* <ListItemSecondaryAction>
                   <Checkbox
                     edge="end"
                     onChange={handleToggle(id)}
                     checked={checked.indexOf(id) !== -1}
                     inputProps={{ "aria-labelledby": id }}
                   />
-                </ListItemSecondaryAction>
+                </ListItemSecondaryAction> */}
               </ListItem>
             );
           })}
